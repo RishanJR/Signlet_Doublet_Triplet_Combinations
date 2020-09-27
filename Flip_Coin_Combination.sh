@@ -15,9 +15,16 @@ hhcount=0
 htcount=0
 ttcount=0
 
+#Variables for triplet
+hhhcount=0
+hhtcount=0
+httcount=0
+tttcount=0
+
 #Decalring dictionary
 declare -A singlet
 declare -A doublet
+declare -A triplet
 
 #Singlet Combination
 for (( i=0 ; i<n ; i++ ))
@@ -33,33 +40,86 @@ do
                 ((hcount++))
                 singlet[$i]="Heads"
 
-                #Checking Doublet Combination (HH and HT)
+                #Checking Doublet Combination (HH)
                 res=$(( RANDOM%2 ))
 
                 if [[ res -eq 0 ]]
                 then
                         ((hhcount++))
                         doublet[$i]="HH"
+                        #Checking Triplet Combination (HHH or HHT)
+                        res=$(( RANDOM%2 ))
+
+                        if [[ res -eq 0 ]]
+                        then
+                                ((hhhcount++))
+                                triplet[$i]="HHH"
+                        else
+                                ((hhtcount++))
+                                triplet[$i]="HHT"
+                        fi
+
 		else
+	                #Checking Doublet Combination (HT)
 			((htcount++))
 			doublet[$i]="HT"
-		fi
+
+			#Checking Triplet Combination (HTH or HTT)
+                        res=$(( RANDOM%2 ))
+
+                        if [[ res -eq 0 ]]
+                        then
+                                ((hhtcount++))
+                                triplet[$i]="HHT"
+                        else
+                                ((httcount++))
+                                triplet[$i]="HTT"
+                        fi
+
+                fi
 
 	else
-		#Checking Singlet Combination (Tails
+		#Checking Singlet Combination (Tails)
 		((tcount++))
 		singlet[$i]="Tails"
 
-                #Checking Doublet Combination (HT and TT)
                 res=$(( RANDOM%2 ))
 
                 if [[ res -eq 0 ]]
                 then
+                	#Checking Doublet Combination (HT)
                         ((htcount++))
                         doublet[$i]="HT"
+
+                        #Checking Triplet Combination (HHT or HTT)
+                        res=$(( RANDOM%2 ))
+
+                        if [[ res -eq 0 ]]
+                        then
+                                ((hhtcount++))
+                                triplet[$i]="HHT"
+                        else
+                                ((httcount++))
+                                triplet[$i]="HTT"
+                        fi
+
 		else
+			#Checking Doublet Combination (TT)
 			((ttcount++))
 			doublet[$i]="TT"
+
+			#Checking Triplet Combination (HTT or TTT)
+                        res=$(( RANDOM%2 ))
+
+                        if [[ res -eq 0 ]]
+                        then
+                                ((httcount++))
+                                triplet[$i]="HTT"
+                        else
+                                ((tttcount++))
+                                triplet[$i]="TTT"
+                        fi
+
 		fi
 
 	fi
@@ -86,6 +146,18 @@ htperc=$(( $htcount*100/$total ))
 
 echo -e "The percentage of the Doublet combination is $hhperc% heads and heads, $htperc% heads and tails and $ttperc tails and tails"
 
+echo -e "\nNow performing Triplet Combinations]\n"
+
+echo The triplet combinations are:      ${triplet[@]}
+
+#Calculating the percentage of the triplet
+total=$(( $hhhcount+$hhtcount+$httcount+$tttcount ))
+hhhperc=$(( $hhhcount*100/$total ))
+hhtperc=$(( $hhtcount*100/$total ))
+httperc=$(( $httcount*100/$total ))
+tttperc=$(( $tttcount*100/$total ))
+
+echo -e "The percentage of the Triplet combination is $hhhperc% heads, heads and heads, $hhtperc% heads, heads and tails, $httperc% heads, tails and tails and $tttperc% tails, tails and tails\n"
 
 
 
