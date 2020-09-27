@@ -25,6 +25,7 @@ tttcount=0
 declare -A singlet
 declare -A doublet
 declare -A triplet
+declare -A sorting
 
 #Singlet Combination
 for (( i=0 ; i<n ; i++ ))
@@ -159,6 +160,45 @@ tttperc=$(( $tttcount*100/$total ))
 
 echo -e "The percentage of the Triplet combination is $hhhperc% heads, heads and heads, $hhtperc% heads, heads and tails, $httperc% heads, tails and tails and $tttperc% tails, tails and tails\n"
 
+#Grouping together the results into an dictionary
+sorting[HEADS]=$hcount
+sorting[TAILS]=$tcount
+sorting[HH]=$hhcount
+sorting[HT]=$htcount
+sorting[TT]=$ttcount
+sorting[HHH]=$hhhcount
+sorting[HHT]=$hhtcount
+sorting[HTT]=$httcount
+sorting[TTT]=$tttcount
+
+echo The combinations and their respected number of wins are:
+echo ${!sorting[@]}
+echo ${sorting[@]}
+
+#Finding the winner
+#Assinging the number of wins of heads to max
+max=${sorting[HEADS]}
+
+#Finding the maximum number of wins
+for i in ${!sorting[@]}
+do
+	#Comparing the number of wins to max to get the maximum wins
+        if [[ ${sorting[$i]} -gt $max ]]
+        then
+                max=${sorting[$i]}
+        fi
+done
+
+#Checking if there are multiple combinations with the same number of wins
+echo -e "\nThe winning combinations is/are\n"
+
+for i in ${!sorting[@]}
+do
+        if [[ ${sorting[$i]} -eq $max ]]
+        then
+                echo -e "$i has won ${sorting[$i]} times"
+        fi
+done
 
 
 
